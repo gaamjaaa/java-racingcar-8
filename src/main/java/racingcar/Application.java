@@ -1,22 +1,24 @@
 package racingcar;
 
 import camp.nextstep.edu.missionutils.Console;
+import camp.nextstep.edu.missionutils.Randoms;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Application {
+    private static final int MOVE_THRESHOLD = 4;
 
     public static void main(String[] args) {
-        String names = readLine("경주할 자동차 이름을 입력하세요.(이름은 쉼표(,) 기준으로 구분)");
-        String tryCountRaw = readLine("시도할 횟수는 몇 회인가요?");
+        String namesInput = readLine("경주할 자동차 이름을 입력하세요.(이름은 쉼표(,) 기준으로 구분)");
+        String tryCountInput = readLine("시도할 횟수는 몇 회인가요?");
 
-        List<Car> cars = parseCars(names);
-        int tryCount = parseTryCount(tryCountRaw);
+        List<Car> cars = parseCars(namesInput);
+        int tryCount = parseTryCount(tryCountInput);
 
-        System.out.println();
-        System.out.println("실행 결과");
-
-        // 다음 커밋에서 게임 실행/출력 추가
+        printExecutionHeader();
+        runRounds(cars, tryCount);
     }
 
     private static String readLine(String prompt) {
@@ -28,10 +30,10 @@ public class Application {
         if (raw == null) {
             throw new IllegalArgumentException("names required");
         }
-        String[] parts = raw.split(",");
+        String[] nameTokens = raw.split(",");
         List<Car> cars = new ArrayList<>();
-        for (String p : parts) {
-            String name = p.trim();
+        for (String nameToken : nameTokens) {
+            String name = nameToken.trim();
             if (name.isEmpty()) {
                 throw new IllegalArgumentException("empty name");
             }
@@ -50,17 +52,33 @@ public class Application {
         if (raw == null) {
             throw new IllegalArgumentException("try count required");
         }
-        String s = raw.trim();
-        if (s.isEmpty()) {
+        String trimmedInput = raw.trim();
+        if (trimmedInput.isEmpty()) {
             throw new IllegalArgumentException("try count required");
         }
-        if (!s.chars().allMatch(Character::isDigit)) {
+        if (!trimmedInput.chars().allMatch(Character::isDigit)) {
             throw new IllegalArgumentException("try count must be positive integer");
         }
-        int n = Integer.parseInt(s);
-        if (n <= 0) {
+        int tryCount = Integer.parseInt(trimmedInput);
+        if (tryCount <= 0) {
             throw new IllegalArgumentException("try count must be > 0");
         }
-        return n;
+        return tryCount;
+    }
+
+    private static void printExecutionHeader() {
+        System.out.println();
+        System.out.println("실행 결과");
+    }
+
+    private static void runRounds(List<Car> cars, int tryCount) {
+        for (int round = 0; round < tryCount; round++) {
+            for (Car car : cars) {
+                int pick = Randoms.pickNumberInRange(0, 9);
+                if (pick >= MOVE_THRESHOLD) {
+                    car.move();
+                }
+            }
+        }
     }
 }
