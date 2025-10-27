@@ -11,11 +11,12 @@ public class Application {
         String tryCountRaw = readLine("시도할 횟수는 몇 회인가요?");
 
         List<Car> cars = parseCars(names);
+        int tryCount = parseTryCount(tryCountRaw);
 
         System.out.println();
         System.out.println("실행 결과");
 
-        // 다음 커밋에서 tryCount 파싱 및 실행 추가
+        // 다음 커밋에서 게임 실행/출력 추가
     }
 
     private static String readLine(String prompt) {
@@ -43,5 +44,23 @@ public class Application {
             throw new IllegalArgumentException("no cars");
         }
         return cars;
+    }
+
+    private static int parseTryCount(String raw) {
+        if (raw == null) {
+            throw new IllegalArgumentException("try count required");
+        }
+        String s = raw.trim();
+        if (s.isEmpty()) {
+            throw new IllegalArgumentException("try count required");
+        }
+        if (!s.chars().allMatch(Character::isDigit)) {
+            throw new IllegalArgumentException("try count must be positive integer");
+        }
+        int n = Integer.parseInt(s);
+        if (n <= 0) {
+            throw new IllegalArgumentException("try count must be > 0");
+        }
+        return n;
     }
 }
