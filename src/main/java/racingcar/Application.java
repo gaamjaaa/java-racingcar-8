@@ -79,6 +79,14 @@ public class Application {
                     car.move();
                 }
             }
+            printRound(cars);
         }
+    }
+
+    private static void printRound(List<Car> cars) {
+        for (Car car : cars) {
+            System.out.println(car.getName() + " : " + "-".repeat(car.getPosition()));
+        }
+        System.out.println();
     }
 }
